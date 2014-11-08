@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Your awesome title</title>
+    <description>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+</description>
+    <link>http://yourdomain.com/</link>
+    <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Sat, 08 Nov 2014 16:50:30 +0800</pubDate>
+    <lastBuildDate>Sat, 08 Nov 2014 16:50:30 +0800</lastBuildDate>
+    <generator>Jekyll v2.5.0</generator>
+    
+      <item>
+        <title>Welcome to Jekyll!</title>
+        <description>&lt;p&gt;You’ll find this post in your &lt;code&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
+
+&lt;p&gt;To add new posts, simply add a file in the &lt;code&gt;_posts&lt;/code&gt; directory that follows the convention &lt;code&gt;YYYY-MM-DD-name-of-post.ext&lt;/code&gt; and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.&lt;/p&gt;
+
+&lt;p&gt;Jekyll also offers powerful support for code snippets:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Hi, &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;Tom&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;#=&amp;gt; prints &amp;#39;Hi, Tom&amp;#39; to STDOUT.&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Check out the &lt;a href=&quot;http://jekyllrb.com&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/jekyll/jekyll&quot;&gt;Jekyll’s GitHub repo&lt;/a&gt;. If you have questions, you can ask them on &lt;a href=&quot;https://github.com/jekyll/jekyll-help&quot;&gt;Jekyll’s dedicated Help repository&lt;/a&gt;.&lt;/p&gt;
+
+</description>
+        <pubDate>Sat, 08 Nov 2014 23:04:32 +0800</pubDate>
+        <link>http://yourdomain.com/jekyll/update/2014/11/08/welcome-to-jekyll.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/jekyll/update/2014/11/08/welcome-to-jekyll.html</guid>
+        
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+      <item>
+        <title>动手编写ps命令</title>
+        <description>&lt;h1 id=&quot;ps&quot;&gt;动手编写ps命令&lt;/h1&gt;
+
+&lt;p&gt;标签：cmd_diy /proc
+&lt;strong&gt;__&lt;/strong&gt;&lt;strong&gt;__&lt;/strong&gt;&lt;strong&gt;__&lt;/strong&gt;
+&lt;strong&gt;This project is still in progress!&lt;/strong&gt;
+Jump in：&lt;i class=&quot;icon-github icon-2x&quot;&gt;&lt;/i&gt;    &lt;a href=&quot;http://github.com/zhaonanyu/ps_cmd&quot;&gt;zhaonanyu/ps_cmd&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+&lt;p&gt;##1. 了解ps lf命令&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;此次的目的是编写一个高仿的&lt;strong&gt;ps lf&lt;/strong&gt;命令&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;首先来看一下ps lf命令都能显示什么信息呢？
+&amp;gt; * F - flags associated with the process, see the PROCESS FLAGS section
+* UID - effective user ID
+* PID
+* PPID
+* PRI - priority
+* NI - nice
+* VSZ - virtual memory size of the process in KB. Device mappings are currently excluded; this is subject to change.
+* RSS - resident set size, the non-swapped physical memory that a task has used.
+* WCHAN - name of the kernel function in which the process is sleeping, a”-“if the process is running, or a “*“if the process is multi-threaded and ps is not displaying threads.
+* STAT - multi-character process state
+* TTY - controlling tty
+* TIME - cumulative CPU time, “[DD-]HH:MM:SS” format
+* COMMAND - command name(only the excutable name).&lt;/p&gt;
+
+&lt;p&gt;那么这么多要显示的信息是从哪里获得的呢？
+我们使用&lt;strong&gt;strace&lt;/strong&gt;命令来观察一下ps命令使用的系统调用：
+&lt;code&gt;shell
+$strace -o ~/strace_ps ps
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;该命令是将strace命令得到的信息保存成文件，下面是得到的信息：
+&lt;code&gt;c
+stat(&quot;/proc/1&quot;, {st_mode=S_IFDIR|0555, st_size=0, ...}) = 0
+open(&quot;/proc/1/stat&quot;, O_RDONLY)          = 6
+read(6, &quot;1 (init) S 0 1 1 0 -1 4219136 55&quot;..., 1024) = 198
+close(6)                                = 0
+open(&quot;/proc/1/status&quot;, O_RDONLY)        = 6
+read(6, &quot;Name:\tinit\nState:\tS (sleeping)\nT&quot;..., 1024) = 786
+close(6)                                = 0
+stat(&quot;/proc/2&quot;, {st_mode=S_IFDIR|0555, st_size=0, ...}) = 0
+open(&quot;/proc/2/stat&quot;, O_RDONLY)          = 6
+read(6, &quot;2 (kthreadd) S 0 0 0 0 -1 213817&quot;..., 1024) = 168
+close(6)                                = 0
+open(&quot;/proc/2/status&quot;, O_RDONLY)        = 6
+read(6, &quot;Name:\tkthreadd\nState:\tS (sleepin&quot;..., 1024) = 554
+close(6)        
+&lt;/code&gt;
+当然上面这只是我们用strace得到的strace_ps文件的一部分，参阅strace的结果可以了解到ps命令在读取&lt;strong&gt;/proc&lt;/strong&gt;文件夹中的&lt;strong&gt;/proc/1&lt;/strong&gt;等/proc文件夹中的数字文件夹的某些文件，仔细看事实上它（ps命令）在不停地读取两个文件：&lt;strong&gt;stat和status&lt;/strong&gt;文件。&lt;/p&gt;
+
+&lt;p&gt;来看一下/proc/[pid]文件夹中的&lt;strong&gt;文件&lt;/strong&gt;以及&lt;strong&gt;文件夹&lt;/strong&gt;吧：
+#pic here
+由刚才得到的strace_ps文件了解到：
+&amp;gt;&lt;em&gt;ps命令在不停地读取stat和status文件&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;先来看一下stat文件的内容吧
+&lt;code&gt;shell
+$cat /proc/1/stat
+&lt;/code&gt;
+stat的内容：
+&lt;code&gt;shell
+1 (init) S 0 1 1 0 -1 4219136 52950 1012828 29 782 24 206 1204 789 20 0 1 0 3 34713600 801 18446744073709551615 1 1 0 0 0 0 0 4096 536962595 18446744073709551615 0 0 17 0 0 0 4 0 0 0 0 0 0 0 0 0 0
+&lt;/code&gt;
+诶要我去这都啥？不要着急，接下来就来解释&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;stat&quot;&gt;2. 了解stat文件的内容&lt;/h2&gt;
+&lt;p&gt;在&lt;i class=&quot;icon-linux&quot;&gt;&lt;/i&gt;Linux下面想了解系统中的某些信息是如何存储的当然就是使用&lt;strong&gt;man&lt;/strong&gt;命令咯。
+&lt;code&gt;shell
+$man proc
+&lt;/code&gt;
+往下面找，找到：&lt;strong&gt;/proc/[pid]/stat&lt;/strong&gt;：
+```
+/proc/[pid]/stat
+              Status  information  about  the  process.   This is used by ps(1).  It is defined in /usr/src/linux/fs/proc/array.c.
+	The fields, in order, with their proper scanf(3) format specifiers, are:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pid %d (1) The process ID.
+… ``` 下面就是stat文件每个参数的相关解释，stat文件包含很多进程执行过程中相关的信息，而我们并不需要解析出stat中全部的信息，先从简单的入手做一个显示**pid ppid STAT和COMMAND**的简易ps命令吧。 先找到上面需要的四个参数的信息： ```shell pid %d      (1) The process ID.              comm %s     (2) The filename of the executable, in  parentheses.   This  is  visible
+                      whether or not the executable is swapped out.  state %c    (3)  One  character  from  the  string &quot;RSDZTW&quot; where R is running, S is
+                      sleeping in an interruptible wait, D is waiting in uninterruptible  disk
+                      sleep,  Z is zombie, T is traced or stopped (on a signal), and W is pag‐
+                      ing. ppid %d     (4) The PID of the parent. ``` 回来看一下stat的内容： #pic here *stat file* 上面的man proc中可以了解到：pid是第一个参数，comm是第二个参数，state是第三个参数，ppid是第四个参数。也就是说对于pid:2072的进程,comm为bash,state为S(Sleeping)，其父进程号为2685。 从上面的man proc中可以了解到stat文件总共包含了44个和某一指定进程相关的信息，如刚才所言不着急了解全部信息，先动手写一个简单的ps命令。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+&lt;p&gt;##3. 动手编写ps命令（第一版）
+先简单来说一下咱们自制的ps命令的流程：
+```flow
+st=&amp;gt;start: Start
+io=&amp;gt;inputoutput: 读取/proc/[pid]文件夹
+io1=&amp;gt;inputoutput: 读取/proc/[pid]文件夹中的stat文件
+op=&amp;gt;operation: 解析并显示stat文件的内容
+e=&amp;gt;end&lt;/p&gt;
+
+&lt;p&gt;st-&amp;gt;io-&amp;gt;io1-&amp;gt;op-&amp;gt;e
+```&lt;/p&gt;
+
+</description>
+        <pubDate>Sat, 08 Nov 2014 23:04:32 +0800</pubDate>
+        <link>http://yourdomain.com/jekyll/update/2014/11/08/my-ps-cmd.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/jekyll/update/2014/11/08/my-ps-cmd.html</guid>
+        
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+  </channel>
+</rss>

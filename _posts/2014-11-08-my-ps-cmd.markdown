@@ -1,0 +1,126 @@
+---
+layout: post
+title:  "动手编写ps命令"
+date:   2014-11-08 15:04:32
+categories: jekyll update
+---
+
+# 动手编写ps命令
+
+标签：cmd_diy /proc
+__________________
+**This project is still in progress!**
+Jump in：<i class="icon-github icon-2x"></i>    [zhaonanyu/ps_cmd](http://github.com/zhaonanyu/ps_cmd)
+
+
+----------
+##1. 了解ps lf命令
+
+>此次的目的是编写一个高仿的**ps lf**命令
+
+首先来看一下ps lf命令都能显示什么信息呢？
+> * F - flags associated with the process, see the PROCESS FLAGS section
+* UID - effective user ID
+* PID
+* PPID
+* PRI - priority
+* NI - nice
+* VSZ - virtual memory size of the process in KB. Device mappings are currently excluded; this is subject to change.
+* RSS - resident set size, the non-swapped physical memory that a task has used.
+* WCHAN - name of the kernel function in which the process is sleeping, a"-"if the process is running, or a "*"if the process is multi-threaded and ps is not displaying threads.
+* STAT - multi-character process state
+* TTY - controlling tty
+* TIME - cumulative CPU time, "[DD-]HH:MM:SS" format
+* COMMAND - command name(only the excutable name).
+
+那么这么多要显示的信息是从哪里获得的呢？
+我们使用**strace**命令来观察一下ps命令使用的系统调用：
+```shell
+$strace -o ~/strace_ps ps
+```
+
+
+该命令是将strace命令得到的信息保存成文件，下面是得到的信息：
+```c
+stat("/proc/1", {st_mode=S_IFDIR|0555, st_size=0, ...}) = 0
+open("/proc/1/stat", O_RDONLY)          = 6
+read(6, "1 (init) S 0 1 1 0 -1 4219136 55"..., 1024) = 198
+close(6)                                = 0
+open("/proc/1/status", O_RDONLY)        = 6
+read(6, "Name:\tinit\nState:\tS (sleeping)\nT"..., 1024) = 786
+close(6)                                = 0
+stat("/proc/2", {st_mode=S_IFDIR|0555, st_size=0, ...}) = 0
+open("/proc/2/stat", O_RDONLY)          = 6
+read(6, "2 (kthreadd) S 0 0 0 0 -1 213817"..., 1024) = 168
+close(6)                                = 0
+open("/proc/2/status", O_RDONLY)        = 6
+read(6, "Name:\tkthreadd\nState:\tS (sleepin"..., 1024) = 554
+close(6)        
+```
+当然上面这只是我们用strace得到的strace_ps文件的一部分，参阅strace的结果可以了解到ps命令在读取**/proc**文件夹中的**/proc/1**等/proc文件夹中的数字文件夹的某些文件，仔细看事实上它（ps命令）在不停地读取两个文件：**stat和status**文件。
+
+来看一下/proc/[pid]文件夹中的**文件**以及**文件夹**吧：
+#pic here
+由刚才得到的strace_ps文件了解到：
+>*ps命令在不停地读取stat和status文件*
+
+先来看一下stat文件的内容吧
+```shell
+$cat /proc/1/stat
+```
+stat的内容：
+```shell
+1 (init) S 0 1 1 0 -1 4219136 52950 1012828 29 782 24 206 1204 789 20 0 1 0 3 34713600 801 18446744073709551615 1 1 0 0 0 0 0 4096 536962595 18446744073709551615 0 0 17 0 0 0 4 0 0 0 0 0 0 0 0 0 0
+```
+诶要我去这都啥？不要着急，接下来就来解释
+
+
+----------
+
+
+##2. 了解stat文件的内容
+在<i class="icon-linux"></i>Linux下面想了解系统中的某些信息是如何存储的当然就是使用**man**命令咯。
+```shell
+$man proc
+```
+往下面找，找到：**/proc/[pid]/stat**：
+```
+/proc/[pid]/stat
+              Status  information  about  the  process.   This is used by ps(1).  It is defined in /usr/src/linux/fs/proc/array.c.
+	The fields, in order, with their proper scanf(3) format specifiers, are:
+	
+	pid %d (1) The process ID.
+	…
+```
+下面就是stat文件每个参数的相关解释，stat文件包含很多进程执行过程中相关的信息，而我们并不需要解析出stat中全部的信息，先从简单的入手做一个显示**pid ppid STAT和COMMAND**的简易ps命令吧。
+先找到上面需要的四个参数的信息：
+```shell
+pid %d      (1) The process ID.             
+comm %s     (2) The filename of the executable, in  parentheses.   This  is  visible
+                          whether or not the executable is swapped out. 
+state %c    (3)  One  character  from  the  string "RSDZTW" where R is running, S is
+                          sleeping in an interruptible wait, D is waiting in uninterruptible  disk
+                          sleep,  Z is zombie, T is traced or stopped (on a signal), and W is pag‐
+                          ing.
+ppid %d     (4) The PID of the parent.
+```
+回来看一下stat的内容：
+#pic here *stat file*
+上面的man proc中可以了解到：pid是第一个参数，comm是第二个参数，state是第三个参数，ppid是第四个参数。也就是说对于pid:2072的进程,comm为bash,state为S(Sleeping)，其父进程号为2685。
+从上面的man proc中可以了解到stat文件总共包含了44个和某一指定进程相关的信息，如刚才所言不着急了解全部信息，先动手写一个简单的ps命令。
+
+
+----------
+##3. 动手编写ps命令（第一版）
+先简单来说一下咱们自制的ps命令的流程：
+```flow
+st=>start: Start
+io=>inputoutput: 读取/proc/[pid]文件夹
+io1=>inputoutput: 读取/proc/[pid]文件夹中的stat文件
+op=>operation: 解析并显示stat文件的内容
+e=>end
+
+st->io->io1->op->e
+```
+
+
